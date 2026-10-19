@@ -132,29 +132,10 @@ def redimensionar_para_mostrar(imagen, max_ancho=1600, max_alto=1200):
     nuevo_h = int(h * escala)
     return cv2.resize(imagen, (nuevo_w, nuevo_h), interpolation=cv2.INTER_AREA), escala
 
-
-def cargar_calibracion():
-    """Carga calibracion.json si existe, solo informativo."""
-    ruta_json = os.path.join(os.path.dirname(os.path.abspath(__file__)), "calibracion.json")
-    if os.path.exists(ruta_json):
-        with open(ruta_json, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return None
-
-
 def main():
     print("=" * 60)
     print("SISTEMA DE VISIÓN CLÁSICA - PROCESAMIENTO POR FOTO")
     print("=" * 60)
-
-    # Cargar datos de calibración (informativos)
-    calibracion = cargar_calibracion()
-    if calibracion:
-        print(f"\n[INFO] Calibración previa cargada: {calibracion.get('ruta_imagen', 'N/A')}")
-        print(f"       Objetos calibrados: {calibracion.get('num_objetos', 0)}")
-    else:
-        print("\n[AVISO] No se encontró calibracion.json. "
-              "Los umbrales de radio debes ajustarlos manualmente en este archivo.")
 
     # Seleccionar imagen a procesar
     ruta_imagen = seleccionar_imagen("Selecciona la foto a procesar")
