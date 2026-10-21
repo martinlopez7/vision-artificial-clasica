@@ -13,6 +13,7 @@ HUE_MAX_COBRE = 16.5              # Hue mediano menor -> cobre; mayor -> dorado
 SATURACION_MAX_BIMETAL = 150      # Por debajo de este valor se considera bimetalica
 SATURACION_CENTRO_BIMETAL = 145   # Centro más saturado -> 2 Euros; menos -> 1 Euro
 SATURACION_MINIMA_HUE = 100       # Solo se usan píxeles con S suficiente para la mediana
+UMBRAL_ASPECTO_BILLETE = 1.40     # AR del rectángulo mínimo orientado (invariante al giro)
 
 # Prototipos obtenidos de la calibración (H medio, S media y Lab b medios).
 PROTOTIPOS_BILLETES = {
@@ -185,7 +186,13 @@ def main():
             continue
 
         circularidad = (4 * np.pi * area) / (perimetro ** 2)
-        aspect_ratio = float(w_box) / h_box if h_box != 0 else 0
+
+        # Rectángulo mínimo orientado: sus lados son el largo y el ancho reales
+        # del objeto, independientemente de cómo esté girado sobre el tapete.
+        (_, _), (lado_a, lado_b), _ = cv2.minAreaRect(cnt)
+        lado_mayor = max(lado_a, lado_b)
+        lado_menor = min(lado_a, lado_b)
+        aspecto_orientado = lado_mayor / lado_menor if lado_menor > 0 else 0.0
 
         # Calcular H solo dentro del contorno, sin incluir el tapete del
         # rectángulo que lo rodea.
@@ -203,9 +210,10 @@ def main():
         valor = 0.0
 
         # =========================================================================
-        # PASO 2: ÁRBOL DE DECISIÓN - RAMA A: BILLETES (Rectangulares y grandes)
+        # PASO 2: ÁRBOL DE DECISIÓN - RAMA A: BILLETES
+        # (rectangulares, grandes y en cualquier orientación)
         # =========================================================================
-        es_billete = (aspect_ratio > 1.25 or aspect_ratio < 0.8) and area > 100000
+        es_billete = aspecto_orientado > UMBRAL_ASPECTO_BILLETE and area > 100000
         if es_billete:
             lab_b = calcular_lab_b(frame, cnt, (x, y, w_box, h_box))
             clase, valor = clasificar_billete(hue_medio, saturacion_media, lab_b)

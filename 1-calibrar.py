@@ -85,6 +85,13 @@ def detectar_objetos(imagen_bgr):
         perimetro = cv2.arcLength(cnt, True)
         circularidad = (4 * np.pi * area) / (perimetro ** 2) if perimetro > 0 else 0
         aspect_ratio = float(w) / h if h != 0 else 0
+
+        # Rectángulo mínimo orientado: no depende del giro del objeto.
+        (_, _), (lado_a, lado_b), _ = cv2.minAreaRect(cnt)
+        aspecto_orientado = (
+            max(lado_a, lado_b) / min(lado_a, lado_b) if min(lado_a, lado_b) > 0 else 0
+        )
+
         radio = np.sqrt(area / np.pi)
 
         # HSV medio calculado solo dentro del contorno
@@ -124,6 +131,7 @@ def detectar_objetos(imagen_bgr):
             "area_px2": float(area),
             "bbox": [int(x), int(y), int(w), int(h)],
             "aspect_ratio": float(aspect_ratio),
+            "aspecto_orientado": float(aspecto_orientado),
             "circularidad": float(circularidad)
         }
         if tipo == "moneda":
@@ -237,6 +245,7 @@ def main():
                     print(f" -> Bounding Box          : x={datos['bbox'][0]}, y={datos['bbox'][1]}, "
                           f"w={datos['bbox'][2]}, h={datos['bbox'][3]}")
                     print(f" -> Aspect Ratio          : {datos['aspect_ratio']:.2f}")
+                    print(f" -> Aspecto orientado     : {datos['aspecto_orientado']:.2f}")
                     print(f" -> Circularidad          : {datos['circularidad']:.3f}")
                     encontrado = True
                     break
