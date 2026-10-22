@@ -24,8 +24,8 @@ Este trabajo presenta un sistema de visión artificial clásica que analiza una 
 5. Tabla de características extraídas
 6. Árbol de decisión
 7. Justificación experimental de parámetros y umbrales
-8. Resultados sobre el conjunto de pruebas *(pendiente)*
-9. Medida cuantitativa de aciertos y errores *(pendiente)*
+8. Resultados sobre el conjunto de pruebas
+9. Medida cuantitativa de aciertos y errores
 10. Código del programa funcional
 
 ---
@@ -412,26 +412,47 @@ Todos los cortes son **puntos medios** de los huecos medidos, salvo dos:
 
 ## 8. Resultados sobre el conjunto de pruebas
 
-> **Apartado pendiente.** Se completará con:
->
-> - descripción del conjunto de prueba (número de escenas, composición, condiciones de iluminación, si son distintas de las de calibración);
-> - tabla por escena: objetos presentes, objetos detectados, clases asignadas, importe real e importe calculado;
-> - imágenes anotadas de cada escena, con los aciertos y los errores visibles;
-> - análisis cualitativo de los fallos (detección, clasificación, segmentación) y de los casos límite.
->
-> **Nota:** las cuatro escenas de `fotos/` ya están usadas en la calibración de los prototipos de billetes, por lo que no deben presentarse como conjunto de prueba independiente. Conviene reservar escenas nuevas para este apartado.
+El conjunto de prueba está formado por cinco escenas nuevas, no utilizadas en la calibración. Todas tienen la misma composición: los billetes de 5, 10 y 20 € y monedas por valor de 5,04 €, es decir, un total real de 40,04 €. Cambian la posición, la orientación y las monedas.
+
+**Resultados por escena.**
+
+| Escena | Objetos | Total real | Total calculado | Resultado |
+|---|---|---|---|---|
+| `IMG20261021110439` | 21 | 40,04 € | 44,78 € | Incorrecto |
+| `IMG20261021111605` | 21 | 40,04 € | 40,04 € | Correcto |
+| `IMG20261021112446` | 21 | 40,04 € | 40,04 € | Correcto |
+| `IMG20261021152525` | 21 | 40,04 € | 41,03 € | Incorrecto |
+| `IMG20261021153221` | 21 | 40,04 € | 41,91 € | Incorrecto |
+
+El sistema detecta los 105 objetos monetarios de las cinco escenas, sin omisiones. El total es correcto en dos escenas y en las otras tres se sobreestima. En `IMG20261021112446` detectó además una región no monetaria en el borde superior izquierdo, que etiquetó como `Desconocido` y no sumó. Los tres billetes de esa escena, inclinados, se identifican correctamente.
 
 ---
 
 ## 9. Medida cuantitativa de aciertos y errores
 
-> **Apartado pendiente.** Se completará con:
->
-> - matriz de confusión 11 × 11 (más la clase «desconocido») sobre el conjunto de prueba;
-> - exactitud por objeto (*accuracy*) y por clase (*precision* y *recall*), con el número de muestras de cada clase;
-> - error en el importe total: diferencia en euros por escena y error absoluto medio;
-> - análisis de los errores más frecuentes y de su impacto económico (por ejemplo, confundir 1 € con 2 € frente a confundir 1 c con 2 c);
-> - comparación entre el rendimiento en las escenas de calibración y en las escenas nuevas, para evidenciar la generalización.
+**Aciertos y errores por escena.**
+
+| Escena | Objetos | Aciertos | Errores | Exactitud | Error en el total |
+|---|---|---|---|---|---|
+| `IMG20261021110439` | 21 | 17 | 4 | 81,0 % | +4,74 € |
+| `IMG20261021111605` | 21 | 21 | 0 | 100,0 % | 0,00 € |
+| `IMG20261021112446` | 21 | 21 | 0 | 100,0 % | 0,00 € |
+| `IMG20261021152525` | 21 | 20 | 1 | 95,2 % | +0,99 € |
+| `IMG20261021153221` | 21 | 17 | 4 | 81,0 % | +1,87 € |
+| **Total** | **105** | **96** | **9** | **91,4 %** | **MAE 1,52 €** |
+
+**Errores de clasificación.**
+
+| Clase real | Clase asignada | Errores |
+|---|---|---|
+| 1 c | 1 € | 3 |
+| 2 c | 1 € | 1 |
+| 5 c | 2 € | 1 |
+| 10 c | 1 € | 3 |
+| 2 € | 1 € | 1 |
+| **Total** | | **9** |
+
+La exactitud por objeto es del 91,4 % (96 de 105) y todos los errores son de clasificación: no se perdió ningún objeto. Ocho de los nueve errores terminan en 1 € porque el umbral `S < 150`, pensado para detectar las bimetaladas, se cruza cuando el flash baja la saturación media de una moneda.
 
 ---
 

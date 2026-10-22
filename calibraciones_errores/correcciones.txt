@@ -1,0 +1,20 @@
+IMG20261021110439:
+objeto 13 es moneda 10ct
+objeto 12 es moneda 1ct
+objeto 10 es moneda 10ct
+objeto 9 es moneda 5 ct
+
+IMG20261021111605:
+0 fallos
+
+IMG20261021112446:
+0 fallos
+
+IMG20261021152525:
+objeto 7 es moneda 1ct
+
+IMG20261021153221:
+objeto 15 es moneda 2ct
+objeto 12 es moneda 10ct
+objeto 11 es moneda 2eur
+objeto 8 es moneda 1ct
