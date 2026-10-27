@@ -259,12 +259,6 @@ Contorno candidato (A ≥ 2000 px² y no toca el borde de la imagen)
 
 La condición del nodo N1 se evalúa sobre el **rectángulo mínimo orientado** que devuelve `cv2.minAreaRect`, no sobre el rectángulo paralelo a los ejes. Sus dos lados son el largo y el ancho reales del billete, de modo que la relación de aspecto no cambia al girarlo: un billete a 45° sigue dando ≈ 1,8. El umbral 1,40 es el punto medio entre las monedas (1,000–1,032) y los billetes (1,778–1,897), con un margen de ±0,37.
 
-La siguiente figura muestra un billete de 10 € girado 45°: el contorno verde es el detectado y el rectángulo amarillo es el mínimo orientado que se usa para medir la relación de aspecto. El sistema lo identifica igual que si estuviera recto.
-
-**Billete de 10 € girado 45° sobre la escena `IMG20261019113420.jpg`; el rectángulo mínimo orientado conserva la relación de aspecto.**
-
-![Billete girado 45 grados](figuras/billete_diagonal.png)
-
 **Rama de billetes: clasificación por prototipos**
 
 Los billetes no se separan con umbrales independientes porque sus rangos de color se solapan parcialmente. En su lugar se definieron tres prototipos a partir de la calibración y se asigna la clase cuya distancia normalizada es menor.
